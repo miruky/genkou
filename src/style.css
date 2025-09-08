@@ -1,0 +1,414 @@
+/* 原稿用紙を思わせる生成りの紙色に、朱色の一点アクセント。
+   本文は明朝で組み、縦書きはwriting-modeで実現する。 */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f7f4ed;
+  --paper: #fffdf6;
+  --ink: #2b2722;
+  --muted: #6f675a;
+  --line: #e5decf;
+  --rule: #e8d8c8;
+  --accent: #b2421e;
+  --accent-soft: #f6e3da;
+  --shadow: 0 8px 24px rgb(43 39 34 / 0.07);
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1916;
+    --paper: #232019;
+    --ink: #eae4d8;
+    --muted: #a59a87;
+    --line: #393327;
+    --rule: #3d362c;
+    --accent: #e0764c;
+    --accent-soft: #3c2a20;
+    --shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+h2 {
+  font-size: 1.05rem;
+  margin: 0 0 12px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+/* ---- 骨格 ---- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.site-header-inner {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.brand svg {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+
+.counts {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.count strong {
+  color: var(--ink);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.site-main {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 24px 24px 64px;
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.site-footer p {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 16px 24px;
+}
+
+/* ---- 入場モーション ---- */
+
+.paper,
+.panel {
+  animation: view-in 0.4s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---- ツールバー ---- */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.snapshot-form {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.snapshot-form input {
+  width: 200px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.92rem;
+}
+
+.snapshot-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.button:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.button:active {
+  transform: none;
+}
+
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.button.primary:hover {
+  filter: brightness(1.06);
+}
+
+.button.small {
+  padding: 5px 12px;
+  font-size: 0.85rem;
+}
+
+.button.small svg {
+  width: 15px;
+  height: 15px;
+}
+
+.button.confirming {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.icon-button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.icon-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ---- 原稿用紙 ---- */
+
+.paper {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 8px;
+  margin-bottom: 16px;
+}
+
+.paper textarea {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+  font-size: 19px;
+  resize: vertical;
+  outline: none;
+  padding: 24px;
+}
+
+/* 縦書き: 列の罫線をlinear-gradientで引く。列幅=line-height */
+.paper.vertical textarea {
+  writing-mode: vertical-rl;
+  height: 600px;
+  resize: none;
+  line-height: 44px;
+  background-image: repeating-linear-gradient(
+    to left,
+    transparent,
+    transparent 43px,
+    var(--rule) 43px,
+    var(--rule) 44px
+  );
+  background-origin: content-box;
+  background-clip: content-box;
+}
+
+/* 横書き: 行の罫線 */
+.paper.horizontal textarea {
+  min-height: 480px;
+  line-height: 44px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 43px,
+    var(--rule) 43px,
+    var(--rule) 44px
+  );
+  background-origin: content-box;
+  background-clip: content-box;
+}
+
+/* ---- 節目 ---- */
+
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.snapshots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.snapshot {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.snapshot:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.snapshot-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.snapshot-meta {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.snapshot-diff {
+  margin: 4px 0 8px;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.snapshot-diff .added {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.snapshot-diff .removed {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.snapshot-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .site-main {
+    padding: 16px 12px 48px;
+  }
+
+  .paper.vertical textarea {
+    height: 70vh;
+  }
+
+  .snapshot-form {
+    margin-left: 0;
+    flex: 1;
+  }
+
+  .snapshot-form input {
+    flex: 1;
+    width: auto;
+  }
+}
