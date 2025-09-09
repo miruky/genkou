@@ -10,7 +10,14 @@ import {
   type Draft,
   type DraftStore,
 } from './lib/history';
+import { modeLabel, type ThemeMode, ThemeController } from './lib/theme';
 import { icons } from './icons';
+
+const THEME_ICONS: Record<ThemeMode, string> = {
+  auto: icons.themeAuto,
+  light: icons.themeLight,
+  dark: icons.themeDark,
+};
 
 const ESCAPES: Record<string, string> = {
   '&': '&amp;',
@@ -37,6 +44,7 @@ export interface AppDeps {
 
 export function createApp({ root, store, initialDraft }: AppDeps): void {
   const draft = initialDraft;
+  const theme = new ThemeController();
   /** 復元の二度押し確認の対象スナップショットid */
   let confirmingRestore: string | null = null;
   let confirmTimer: ReturnType<typeof setTimeout> | null = null;
@@ -98,6 +106,13 @@ export function createApp({ root, store, initialDraft }: AppDeps): void {
       draft.vertical = !draft.vertical;
       save();
       render();
+    });
+
+    const themeBtn = root.querySelector<HTMLButtonElement>('#theme-toggle');
+    themeBtn?.addEventListener('click', () => {
+      const mode = theme.cycle();
+      themeBtn.innerHTML = THEME_ICONS[mode];
+      themeBtn.setAttribute('aria-label', `配色テーマ: ${modeLabel(mode)}(クリックで切り替え)`);
     });
 
     root.querySelector<HTMLFormElement>('#snapshot-form')?.addEventListener('submit', (e) => {
@@ -173,8 +188,12 @@ export function createApp({ root, store, initialDraft }: AppDeps): void {
     root.innerHTML = `
       <header class="site-header">
         <div class="site-header-inner">
-          <span class="brand">${icons.logo}<span>genkou</span></span>
-          <div id="counts" class="counts">${countsHtml()}</div>
+          <span class="brand">${icons.logo}<span class="brand-text"><span class="brand-kicker">原稿用紙</span><span class="brand-name">genkou</span></span></span>
+          <div class="header-right">
+            <div id="counts" class="counts">${countsHtml()}</div>
+            <button type="button" class="icon-button" id="theme-toggle"
+              aria-label="配色テーマ: ${modeLabel(theme.mode)}(クリックで切り替え)">${THEME_ICONS[theme.mode]}</button>
+          </div>
         </div>
       </header>
       <main class="site-main">
@@ -192,7 +211,10 @@ export function createApp({ root, store, initialDraft }: AppDeps): void {
             placeholder="ここに本文を書く">${esc(draft.text)}</textarea>
         </div>
         <section class="panel">
-          <h2>推敲の節目</h2>
+          <div class="panel-head">
+            <span class="panel-kicker">Revisions</span>
+            <h2>推敲の節目</h2>
+          </div>
           ${snapshotList()}
         </section>
       </main>
