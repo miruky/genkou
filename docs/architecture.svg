@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" role="img" aria-labelledby="arch-title">
+  <title id="arch-title">genkouの構成図。UI層が字数計算と推敲履歴の2モジュールを呼び、原稿はlocalStorageに保存される。</title>
+  <style>
+    .box { fill: #fffdf6; stroke: #e5decf; stroke-width: 1.5; }
+    .layer { fill: #f7f4ed; stroke: #e5decf; stroke-width: 1.5; }
+    .chip { fill: #f6e3da; stroke: none; }
+    .name { fill: #2b2722; font: 600 15px system-ui, sans-serif; }
+    .label { fill: #6f675a; font: 13px system-ui, sans-serif; }
+    .chip-text { fill: #b2421e; font: 600 13px system-ui, sans-serif; }
+    .layer-name { fill: #b2421e; font: 700 13px system-ui, sans-serif; letter-spacing: 0.08em; }
+    .edge { stroke: #6f675a; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+    .edge-label { fill: #6f675a; font: 12px system-ui, sans-serif; }
+    #arrow path { fill: #6f675a; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #232019; stroke: #393327; }
+      .layer { fill: #1b1916; stroke: #393327; }
+      .chip { fill: #3c2a20; }
+      .name { fill: #eae4d8; }
+      .label { fill: #a59a87; }
+      .chip-text { fill: #e0764c; }
+      .layer-name { fill: #e0764c; }
+      .edge { stroke: #a59a87; }
+      .edge-label { fill: #a59a87; }
+      #arrow path { fill: #a59a87; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+  </defs>
+
+  <rect class="layer" x="40" y="32" width="800" height="128" rx="14"/>
+  <text class="layer-name" x="64" y="60">UI層(app.ts / main.ts)</text>
+  <text class="label" x="64" y="82">本文の入力は字数表示だけを差し替え、節目の操作のときだけ全体を描き直す</text>
+  <rect class="chip" x="64" y="100" width="170" height="32" rx="16"/>
+  <text class="chip-text" x="149" y="121" text-anchor="middle">縦書き・横書きの原稿</text>
+  <rect class="chip" x="246" y="100" width="120" height="32" rx="16"/>
+  <text class="chip-text" x="306" y="121" text-anchor="middle">字数の表示</text>
+  <rect class="chip" x="378" y="100" width="130" height="32" rx="16"/>
+  <text class="chip-text" x="443" y="121" text-anchor="middle">推敲の節目</text>
+
+  <path class="edge" d="M245 160 V224"/>
+  <path class="edge" d="M635 160 V224"/>
+
+  <rect class="box" x="155" y="228" width="180" height="96" rx="14"/>
+  <text class="name" x="245" y="262" text-anchor="middle">count.ts</text>
+  <text class="label" x="245" y="286" text-anchor="middle">字数・行数・</text>
+  <text class="label" x="245" y="306" text-anchor="middle">原稿用紙換算</text>
+
+  <rect class="box" x="545" y="228" width="180" height="96" rx="14"/>
+  <text class="name" x="635" y="262" text-anchor="middle">history.ts</text>
+  <text class="label" x="635" y="286" text-anchor="middle">節目の保存・復元と</text>
+  <text class="label" x="635" y="306" text-anchor="middle">差分量の見積もり</text>
+
+  <path class="edge" d="M635 324 V388"/>
+  <text class="edge-label" x="647" y="362">保存・復元</text>
+
+  <rect class="box" x="545" y="392" width="180" height="48" rx="14"/>
+  <text class="name" x="635" y="421" text-anchor="middle">localStorage</text>
+</svg>

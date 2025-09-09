@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="logo-title">
+  <title id="logo-title">genkou - 縦罫の原稿用紙のロゴ</title>
+  <style>
+    .bg { fill: #f7f4ed; }
+    .ink { stroke: #2b2722; }
+    .accent { stroke: #b2421e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1b1916; }
+      .ink { stroke: #eae4d8; }
+      .accent { stroke: #e0764c; }
+    }
+  </style>
+  <rect class="bg" width="128" height="128" rx="28"/>
+  <g fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <rect class="ink" x="24" y="24" width="80" height="80" rx="8"/>
+    <path class="ink" d="M51 24v80"/>
+    <path class="ink" d="M77 24v80"/>
+    <path class="accent" d="M90.5 40v22" stroke-width="8"/>
+  </g>
+</svg>
