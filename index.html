@@ -7,10 +7,25 @@
       name="description"
       content="原稿用紙エディタ。縦書きで書き、字数と400字詰め換算を数え、推敲の節目を履歴に残す"
     />
-    <meta name="theme-color" content="#f7f4ed" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1b1916" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f3efe4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#17150f" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <title>genkou | 原稿用紙エディタ</title>
+    <script>
+      // 描画前に保存テーマを解決して data-theme を載せ、初回のちらつきを防ぐ。
+      (function () {
+        try {
+          var raw = localStorage.getItem('genkou.theme.v1');
+          var mode = raw === 'light' || raw === 'dark' || raw === 'auto' ? raw : 'auto';
+          var dark =
+            mode === 'dark' ||
+            (mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (e) {
+          /* localStorage 不可の環境は既定(ライト)で描く */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>
