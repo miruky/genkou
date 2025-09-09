@@ -53,15 +53,43 @@ export function createApp({ root, store, initialDraft }: AppDeps): void {
     store.save(draft);
   }
 
+  function downloadText(): void {
+    const url = URL.createObjectURL(new Blob([draft.text], { type: 'text/plain;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'genkou.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /** 集中モード: 余計な要素を隠し、本文だけに向き合う。 */
+  function toggleFocus(on?: boolean): void {
+    const active = document.body.classList.toggle('focus-mode', on);
+    if (active) root.querySelector<HTMLTextAreaElement>('#editor')?.focus();
+  }
+
+  // ウィンドウ全体のショートカット。描画のたびに付け替えないよう一度だけ登録する。
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && document.body.classList.contains('focus-mode')) {
+      toggleFocus(false);
+      return;
+    }
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
+      event.preventDefault();
+      downloadText();
+    }
+  });
+
   function countsHtml(): string {
     const c = countText(draft.text);
     const sheets = manuscriptPages(draft.text);
     return `
       <span class="count"><strong>${c.chars}</strong>字</span>
-      <span class="count">空白込み <strong>${c.charsWithSpaces}</strong>字</span>
       <span class="count"><strong>${c.lines}</strong>行</span>
+      <span class="count"><strong>${c.sentences}</strong>文</span>
       <span class="count">20×20原稿用紙 <strong>${sheets}</strong>枚</span>
-      <span class="count">400字換算 <strong>${c.pages400}</strong>枚</span>`;
+      <span class="count">400字換算 <strong>${c.pages400}</strong>枚</span>
+      <span class="count">約 <strong>${c.readingMinutes}</strong>分で読める</span>`;
   }
 
   function snapshotList(): string {
@@ -70,12 +98,12 @@ export function createApp({ root, store, initialDraft }: AppDeps): void {
     }
     const items = [...draft.snapshots]
       .sort((a, b) => b.savedAt - a.savedAt)
-      .map((snap) => {
+      .map((snap, i) => {
         const c = countText(snap.text);
         const diff = diffStats(snap.text, draft.text);
         const confirming = confirmingRestore === snap.id;
         return `
-          <li class="snapshot" style="--i:0">
+          <li class="snapshot" style="--i:${i}">
             <div class="snapshot-head">
               <strong>${esc(snap.label) || '(無題の節目)'}</strong>
               <span class="snapshot-meta">${formatDateTime(snap.savedAt)}・${c.chars}字</span>
@@ -174,14 +202,9 @@ export function createApp({ root, store, initialDraft }: AppDeps): void {
       });
     }
 
-    root.querySelector('#download')?.addEventListener('click', () => {
-      const url = URL.createObjectURL(new Blob([draft.text], { type: 'text/plain' }));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'genkou.txt';
-      a.click();
-      URL.revokeObjectURL(url);
-    });
+    root.querySelector('#download')?.addEventListener('click', downloadText);
+    root.querySelector('#focus-mode')?.addEventListener('click', () => toggleFocus());
+    root.querySelector('#focus-exit')?.addEventListener('click', () => toggleFocus(false));
   }
 
   function render(): void {
@@ -190,7 +213,7 @@ export function createApp({ root, store, initialDraft }: AppDeps): void {
         <div class="site-header-inner">
           <span class="brand">${icons.logo}<span class="brand-text"><span class="brand-kicker">原稿用紙</span><span class="brand-name">genkou</span></span></span>
           <div class="header-right">
-            <div id="counts" class="counts">${countsHtml()}</div>
+            <div id="counts" class="counts" aria-live="polite">${countsHtml()}</div>
             <button type="button" class="icon-button" id="theme-toggle"
               aria-label="配色テーマ: ${modeLabel(theme.mode)}(クリックで切り替え)">${THEME_ICONS[theme.mode]}</button>
           </div>
@@ -200,6 +223,8 @@ export function createApp({ root, store, initialDraft }: AppDeps): void {
         <div class="toolbar">
           <button type="button" class="button" id="toggle-direction">
             ${icons.rotate}<span>${draft.vertical ? '横書きにする' : '縦書きにする'}</span></button>
+          <button type="button" class="button" id="focus-mode">
+            ${icons.focus}<span>集中モード</span></button>
           <button type="button" class="button" id="download">${icons.download}<span>テキストを保存</span></button>
           <form class="snapshot-form" id="snapshot-form">
             <input id="snapshot-label" placeholder="覚え書き(例: 初稿)" aria-label="節目の覚え書き" />
@@ -218,6 +243,8 @@ export function createApp({ root, store, initialDraft }: AppDeps): void {
           ${snapshotList()}
         </section>
       </main>
+      <button type="button" class="focus-exit" id="focus-exit" aria-label="集中モードを終える (Esc)">
+        ${icons.focus}<span>集中モードを終える</span></button>
       <footer class="site-footer">
         <p>genkou — 原稿用紙エディタ。本文と節目はこの端末のブラウザにだけ保存されます。</p>
       </footer>`;
