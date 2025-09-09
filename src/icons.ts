@@ -30,4 +30,15 @@ export const icons = {
       '<path d="m13 16.5 3.5 3.5 3.5-3.5"/>' +
       '<path d="m7 9 -3.5-3.5L7 2"/>',
   ),
+  themeAuto: svg(
+    '<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none"/>',
+  ),
+  themeLight: svg(
+    '<circle cx="12" cy="12" r="4"/>' +
+      '<path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>',
+  ),
+  themeDark: svg('<path d="M20.5 14.6A8 8 0 0 1 9.4 3.5 7 7 0 1 0 20.5 14.6z"/>'),
+  focus: svg(
+    '<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/>',
+  ),
 } as const;

@@ -1,32 +1,42 @@
-/* 原稿用紙を思わせる生成りの紙色に、朱色の一点アクセント。
-   本文は明朝で組み、縦書きはwriting-modeで実現する。 */
+/* 原稿用紙を思わせる生成りの紙色に、朱色の一点アクセント。本文も見出しも明朝で組む。
+   テーマは data-theme(light/dark)で切り替え、描画前の head スクリプトが解決して載せ替える。
+   箱+影の羅列を避け、罫線(1px)と余白で区切る。 */
 
 :root {
-  color-scheme: light dark;
-  --bg: #f7f4ed;
-  --paper: #fffdf6;
-  --ink: #2b2722;
-  --muted: #6f675a;
-  --line: #e5decf;
-  --rule: #e8d8c8;
+  --font-sans: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+  --font-serif: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+
+  --bg: #f3efe4;
+  --paper: #faf7ef;
+  --surface-2: #ebe5d6;
+  --ink: #232019;
+  --ink-soft: #45403a;
+  --muted: #6e665a;
+  --line: #e3dccb;
+  --line-strong: #d5ccb7;
+  --rule: #e7d7c4;
   --accent: #b2421e;
-  --accent-soft: #f6e3da;
-  --shadow: 0 8px 24px rgb(43 39 34 / 0.07);
-  --radius: 14px;
+  --accent-ink: #9a3717;
+  --accent-soft: rgba(178, 66, 30, 0.1);
+
+  --radius: 12px;
+  --radius-sm: 9px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1b1916;
-    --paper: #232019;
-    --ink: #eae4d8;
-    --muted: #a59a87;
-    --line: #393327;
-    --rule: #3d362c;
-    --accent: #e0764c;
-    --accent-soft: #3c2a20;
-    --shadow: 0 8px 24px rgb(0 0 0 / 0.35);
-  }
+:root[data-theme='dark'] {
+  --bg: #17150f;
+  --paper: #201d16;
+  --surface-2: #2a261d;
+  --ink: #ece5d6;
+  --ink-soft: #c9c0ad;
+  --muted: #9a9081;
+  --line: #322c22;
+  --line-strong: #3e372b;
+  --rule: #3a3328;
+  --accent: #e0764c;
+  --accent-ink: #ea8a64;
+  --accent-soft: rgba(224, 118, 76, 0.16);
 }
 
 * {
@@ -35,6 +45,11 @@
 
 html {
   height: 100%;
+  color-scheme: light dark;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 body {
@@ -42,15 +57,19 @@ body {
   min-height: 100%;
   background: var(--bg);
   color: var(--ink);
-  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h2 {
-  font-size: 1.05rem;
-  margin: 0 0 12px;
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0;
 }
 
 :focus-visible {
@@ -65,85 +84,116 @@ svg {
   flex: none;
 }
 
-/* ---- 骨格 ---- */
+/* ---- ヘッダ ---- */
 
 .site-header {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  background: color-mix(in srgb, var(--bg) 84%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
 
 .site-header-inner {
-  max-width: 60rem;
+  max-width: 64rem;
   margin: 0 auto;
-  padding: 12px 24px;
+  padding: 14px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 16px 24px;
   flex-wrap: wrap;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  gap: 11px;
 }
 
 .brand svg {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   color: var(--accent);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.brand-kicker {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.brand-name {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px 20px;
+  flex-wrap: wrap;
 }
 
 .counts {
   display: flex;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .count strong {
   color: var(--ink);
-  font-size: 1rem;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
   font-variant-numeric: tabular-nums;
+  margin-right: 1px;
 }
 
 .site-main {
-  max-width: 60rem;
+  max-width: 64rem;
   margin: 0 auto;
-  padding: 24px 24px 64px;
+  padding: 32px 24px 72px;
 }
 
 .site-footer {
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .site-footer p {
-  max-width: 60rem;
+  max-width: 64rem;
   margin: 0 auto;
-  padding: 16px 24px;
+  padding: 18px 24px;
 }
 
 /* ---- 入場モーション ---- */
 
 .paper,
 .panel {
-  animation: view-in 0.4s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation: view-in 0.45s var(--ease) both;
+}
+
+.panel {
+  animation-delay: 0.06s;
 }
 
 @keyframes view-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -165,8 +215,8 @@ svg {
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
@@ -178,13 +228,20 @@ svg {
 
 .snapshot-form input {
   width: 200px;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
   background: var(--paper);
   color: var(--ink);
   font: inherit;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
+  transition:
+    border-color 0.16s var(--ease),
+    box-shadow 0.16s var(--ease);
+}
+
+.snapshot-form input::placeholder {
+  color: var(--muted);
 }
 
 .snapshot-form input:focus {
@@ -197,21 +254,23 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
   background: var(--paper);
   color: var(--ink);
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   cursor: pointer;
   transition:
-    border-color 0.15s ease,
-    transform 0.15s ease;
+    border-color 0.16s var(--ease),
+    color 0.16s var(--ease),
+    transform 0.12s var(--ease);
 }
 
 .button:hover {
   border-color: var(--accent);
+  color: var(--accent-ink);
   transform: translateY(-1px);
 }
 
@@ -222,16 +281,17 @@ svg {
 .button.primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: #fff7f2;
 }
 
 .button.primary:hover {
+  color: #fff7f2;
   filter: brightness(1.06);
 }
 
 .button.small {
-  padding: 5px 12px;
-  font-size: 0.85rem;
+  padding: 6px 13px;
+  font-size: 0.84rem;
 }
 
 .button.small svg {
@@ -242,45 +302,46 @@ svg {
 .button.confirming {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: #fff7f2;
 }
 
 .icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   flex: none;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
   background: var(--paper);
   color: var(--muted);
   cursor: pointer;
   transition:
-    color 0.15s ease,
-    border-color 0.15s ease;
+    color 0.16s var(--ease),
+    border-color 0.16s var(--ease),
+    transform 0.12s var(--ease);
 }
 
 .icon-button:hover {
-  color: var(--accent);
+  color: var(--accent-ink);
   border-color: var(--accent);
+  transform: translateY(-1px);
 }
 
 .icon-button svg {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
 }
 
 /* ---- 原稿用紙 ---- */
 
 .paper {
   background: var(--paper);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 8px;
-  margin-bottom: 16px;
+  padding: 10px;
+  margin-bottom: 36px;
 }
 
 .paper textarea {
@@ -289,11 +350,16 @@ svg {
   border: 0;
   background: transparent;
   color: var(--ink);
-  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+  font-family: var(--font-serif);
   font-size: 19px;
   resize: vertical;
   outline: none;
   padding: 24px;
+}
+
+.paper textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
 }
 
 /* 縦書き: 列の罫線をlinear-gradientで引く。列幅=line-height */
@@ -328,19 +394,33 @@ svg {
   background-clip: content-box;
 }
 
-/* ---- 節目 ---- */
+/* ---- 節目(推敲履歴) ---- */
 
 .panel {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.panel-kicker {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .hint {
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
   margin: 0;
+  max-width: 42rem;
 }
 
 .snapshots {
@@ -350,13 +430,12 @@ svg {
 }
 
 .snapshot {
-  padding: 12px 0;
-  border-bottom: 1px dashed var(--line);
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
 }
 
-.snapshot:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
+.snapshot:first-child {
+  border-top: 0;
 }
 
 .snapshot-head {
@@ -366,24 +445,32 @@ svg {
   flex-wrap: wrap;
 }
 
+.snapshot-head strong {
+  font-family: var(--font-serif);
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
 .snapshot-meta {
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .snapshot-diff {
-  margin: 4px 0 8px;
-  font-size: 0.88rem;
+  margin: 5px 0 10px;
+  font-size: 0.86rem;
   color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .snapshot-diff .added {
-  color: var(--accent);
+  color: var(--accent-ink);
   font-weight: 600;
 }
 
 .snapshot-diff .removed {
-  color: var(--muted);
+  color: var(--ink-soft);
   font-weight: 600;
 }
 
@@ -393,9 +480,16 @@ svg {
   align-items: center;
 }
 
+/* ---- レスポンシブ ---- */
+
 @media (max-width: 640px) {
   .site-main {
-    padding: 16px 12px 48px;
+    padding: 22px 14px 56px;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .paper.vertical textarea {
