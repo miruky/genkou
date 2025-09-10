@@ -432,6 +432,7 @@ svg {
 .snapshot {
   padding: 16px 0;
   border-top: 1px solid var(--line);
+  animation: view-in 0.4s var(--ease) calc(var(--i, 0) * 55ms) both;
 }
 
 .snapshot:first-child {
@@ -478,6 +479,71 @@ svg {
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+/* ---- 集中モード ---- */
+
+.focus-exit {
+  display: none;
+}
+
+body.focus-mode .site-header,
+body.focus-mode .toolbar,
+body.focus-mode .panel,
+body.focus-mode .site-footer {
+  display: none;
+}
+
+body.focus-mode .site-main {
+  max-width: 70rem;
+  padding-top: 44px;
+}
+
+body.focus-mode .paper {
+  margin-bottom: 0;
+}
+
+body.focus-mode .paper.vertical textarea {
+  height: calc(100dvh - 108px);
+}
+
+body.focus-mode .paper.horizontal textarea {
+  min-height: calc(100dvh - 108px);
+}
+
+body.focus-mode .focus-exit {
+  display: inline-flex;
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 20;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  opacity: 0;
+  animation: fade-in 0.5s var(--ease) 0.5s forwards;
+  transition:
+    color 0.16s var(--ease),
+    border-color 0.16s var(--ease);
+}
+
+body.focus-mode .focus-exit:hover {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
 }
 
 /* ---- レスポンシブ ---- */

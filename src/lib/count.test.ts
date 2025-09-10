@@ -10,7 +10,27 @@ describe('countText', () => {
   });
 
   it('空の原稿は0', () => {
-    expect(countText('')).toEqual({ chars: 0, charsWithSpaces: 0, lines: 0, pages400: 0 });
+    expect(countText('')).toEqual({
+      chars: 0,
+      charsWithSpaces: 0,
+      lines: 0,
+      sentences: 0,
+      pages400: 0,
+      readingMinutes: 0,
+    });
+  });
+
+  it('終止記号で文を数え、連続記号は1つに畳む', () => {
+    expect(countText('行った。帰った。').sentences).toBe(2);
+    expect(countText('本当に?!').sentences).toBe(1);
+    expect(countText('まだ記号がない').sentences).toBe(1);
+    expect(countText('一文目。二文目').sentences).toBe(2);
+  });
+
+  it('読了時間は毎分500字で切り上げる', () => {
+    expect(countText('あ'.repeat(500)).readingMinutes).toBe(1);
+    expect(countText('あ'.repeat(501)).readingMinutes).toBe(2);
+    expect(countText('あ').readingMinutes).toBe(1);
   });
 
   it('句読点・記号も1字として数える', () => {
